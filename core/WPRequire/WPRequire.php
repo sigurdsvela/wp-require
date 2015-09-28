@@ -13,7 +13,7 @@ class WPRequire
      * Entry point
      */
     public static function main() {
-
+        
     }
 
     /**
@@ -23,7 +23,7 @@ class WPRequire
 
     }
 
-    public static function getAllActivePlugins() {
+    private static function getAllActivePlugins() {
         $plugins = [];
         $pluginFiles = get_option('active_plugins');
         foreach ($pluginFiles as $k => $pluginFile) {
