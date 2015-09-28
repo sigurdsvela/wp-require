@@ -3,5 +3,6 @@
     "description": "An easy ways for you to state your plugin dependencies in your Wordpress theme or plugin",
     "require": {
         "php": ">=5.3.0",
+        "sigurdsvela/std" : "1.*"
     }
 }

@@ -1,4 +1,10 @@
 <?php
+require __DIR__ . "/../vendor/autoload.php";
+
+//Hot fix. Until phpstd implements composer autoloading.
+require __DIR__ . "/../vendor/sigurdsvela/std/autoloader.php";
+
+require __DIR__ . "/../core/autoload.php";
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
