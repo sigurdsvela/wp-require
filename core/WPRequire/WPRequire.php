@@ -44,13 +44,28 @@ class WPRequire {
     private static function managePluginsBaseOnRequirement() {
         self::activatePlugin("akismet/akismet.php");
 
-        $activePlugins = self::getAllActivePlugins();
-
         /* Holds the plugins that must be deactivated */
         /* In plugin-base-file=>[$pluginObject, missing-part] pairs */
-        $toDeactivate = [];
+        $toDeactivate = self::getUnsuportedPlugins();
 
+        
+    }
+
+    /**
+     * Get active plugins that does not have there requirements met.
+     * returns an array with plugin-base-name=>["this"=>[required-version, supplied-version]]
+     * Supplied version in this array will be "null" if there was non supplied. eg. If it was a plugin
+     * that wa entierly missing.
+     */
+    private static function getUnsuportedPlugins() {
+        $activePlugins = self::getAllActivePlugins();
+
+        $unsuported = [];
         foreach ($activePlugins as $plugin) {
+            $pluginFile = $plugin->getPluginFile();
+            $unsuported[$pluginFile] = array();
+
+
             $wpRequireFile = $plugin->getWpRequire();
             $requiredPhpVersion = $wpRequireFile->getRequirePhpVersion();
             $requiredWpVersion = $wpRequireFile->getRequiredWpVersion();
@@ -58,16 +73,39 @@ class WPRequire {
 
             $phpComp = $requiredPhpVersion->isCompatibleWith(self::getPhpVersion());
             if (!$phpComp) {
-                $toDeactivate[$plugin->getPluginFile()] = array($plugin, "php");
+                $unsuported[$pluginFile]["php"] = array($requiredPhpVersion, self::getPhpVersion());
             }
 
             $wpComp = $requiredWpVersion->isCompatibleWith(self::getWpVersion());
             if (!$wpComp) {
-                $toDeactivate[$plugin->getPluginFile()] = array($plugin, "wp");
+                $unsuported[$pluginFile]["wp"] = array($requiredWpVersion, self::getWpVersion());
             }
 
-            //TODO Check for plugin that are required
+            foreach($requiredPlugins as $requiredPlugin) {
+                $requiredPluginFile = $requiredPlugin->getPluginFile();
+                $requiredPluginVersion = $requiredPlugin->getVersion();
+
+                if (!is_plugin_active($requiredPlugin->getPluginFile())) {
+                    if (!isset($unsuported[$pluginFile]))
+                        $unsuported[$pluginFile] = array();
+                    $unsuported[$pluginFile][$requiredPlugin->getPluginFile()] = array($requiredPluginVersion, null);
+                } else {
+                    $pluginData = get_plugin_data($requiredPlugin->getPluginFile());
+                    var_dump($pluginData);
+                    if (!isset($pluginData["version"])) {
+                        throw new Exception("Version not set");
+                        //TODO Set some flag to tell that it is being tried to require a plugin without versioning
+                        continue;
+                    }
+
+                    if (!$requiredPlugin->getVersion()->isCompatibleWith($pluginData["version"])) {
+                        $unsuported[$pluginFile][$requiredPlugin->getPluginFile()] = array($requiredPluginVersion, new Version($pluginData["version"]));
+                    }
+                }
+            }
         }
+
+        return $unsuported;
     }
 
     public static function getPhpVersion() {
