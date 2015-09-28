@@ -3,6 +3,7 @@ namespace WPRequireTest;
 
 use WPRequire\WPRequire;
 use WPRequire\lib\WPPlugin;
+use WPRequireTest\util\WPRequireTestUtils;
 
 class WPRequireTest extends \WP_UnitTestCase {
 
@@ -11,7 +12,7 @@ class WPRequireTest extends \WP_UnitTestCase {
 
         /* To invoke the PRIVATE static method "getAllActivePlugins" */
         $WPRequire = new WPRequire();
-        $activePlugins = $this->invokeMethod($WPRequire, "getAllActivePlugins");
+        $activePlugins = WPRequireTestUtils::invokeMethod($WPRequire, "getAllActivePlugins");
 
         $this->assertEquals(
             "akismet/akismet.php",
@@ -19,24 +20,15 @@ class WPRequireTest extends \WP_UnitTestCase {
         );
 
         $this->assertTrue($activePlugins[0] instanceof WPPlugin);
+
+        deactivate_plugins("akismet/akismet.php");
     }
 
-    /**
-     * Call protected/private method of a class.
-     *
-     * @param object &$object    Instantiated object that we will run method on.
-     * @param string $methodName Method name to call
-     * @param array  $parameters Array of parameters to pass into method.
-     *
-     * @return mixed Method return.
-     */
-    public function invokeMethod(&$object, $methodName, array $parameters = array())
-    {
-        $reflection = new \ReflectionClass(get_class($object));
-        $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
-
-        return $method->invokeArgs($object, $parameters);
+    function testThatAddAdminNoticesThrowsExceptionIfTypeIsOutOfBounds() {
+         /* To invoke the PRIVATE static method "getAllActivePlugins" */
+        $WPRequire = new WPRequire();
+        $this->setExpectedException('InvalidArgumentException');
+        WPRequireTestUtils::invokeMethod($WPRequire, "addAdminNotice", ["the notice text", "not-valid"]);
     }
 }
 
