@@ -9,3 +9,13 @@
  * Text Domain: wp-require
  * Domain Path: /lang
  */
+
+//Hot fix. Until phpstd implements composer autoloading.
+require_once __DIR__ . "/vendor/sigurdsvela/std/autoloader.php";
+require_once __DIR__ . "/core/autoload.php";
+use WPRequire\WPRequire;
+
+if (!defined('WP_REQUIRE_ABSPATH'))
+    define('WP_REQUIRE_ABSPATH', __DIR__);
+
+WPRequire::main();
