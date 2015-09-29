@@ -51,7 +51,7 @@ class WPRequire {
         foreach ($toDeactivate as $pluginFile => $reasons) {
             self::deactivatePlugin($pluginFile);
             // TODO, descriptive messages
-            self::addAdminNotice("Deactivated $pluginFile becuase stuff...");
+            self::addAdminNotice("Deactivated $pluginFile because stuff...");
         }
     }
 
@@ -113,6 +113,11 @@ class WPRequire {
                     }
                 }
             }
+
+            // If no reasons for why this plugin is unsuported can be found
+            // Remove it from the array
+            if (empty($unsuported[$pluginFile]))
+                unset($unsuported[$pluginFile]);
         }
 
         return $unsuported;
