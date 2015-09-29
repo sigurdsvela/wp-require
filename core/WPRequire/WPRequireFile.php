@@ -39,8 +39,8 @@ class WPRequireFile {
         else
             $this->requiredPhpVersion = new Version("*.*.*");
 
+        $this->requiredPlugins = [];
         if ($json->offsetExists("plugins")) {
-            $this->requiredPlugins = [];
             $requiredPlugins = $json->offsetGet("plugins");
             foreach($requiredPlugins as $pluginFileName => $version) {
                 $this->requiredPlugins[$pluginFileName] = new Version($version);
