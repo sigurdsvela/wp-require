@@ -48,7 +48,11 @@ class WPRequire {
         /* In plugin-base-file=>[$pluginObject, missing-part] pairs */
         $toDeactivate = self::getUnsuportedPlugins();
 
-        
+        foreach ($toDeactivate as $pluginFile => $reasons) {
+            self::deactivatePlugin($pluginFile);
+            // TODO, descriptive messages
+            self::addAdminNotice("Deactivated $pluginFile becuase stuff...");
+        }
     }
 
     /**
@@ -56,6 +60,8 @@ class WPRequire {
      * returns an array with plugin-base-name=>["this"=>[required-version, supplied-version]]
      * Supplied version in this array will be "null" if there was non supplied. eg. If it was a plugin
      * that wa entierly missing.
+     *
+     * @return array plugin-name=>(outdatedOrMissing=>(required, supplied))[]
      */
     private static function getUnsuportedPlugins() {
         $activePlugins = self::getAllActivePlugins();
@@ -67,6 +73,10 @@ class WPRequire {
 
 
             $wpRequireFile = $plugin->getWpRequire();
+
+            // If no wp-require file exists, assume it has all it needs
+            if ($wpRequireFile === null) continue;
+
             $requiredPhpVersion = $wpRequireFile->getRequiredPhpVersion();
             $requiredWpVersion = $wpRequireFile->getRequiredWpVersion();
             $requiredPlugins = $wpRequireFile->getRequiredPlugins();
