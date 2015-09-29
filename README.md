@@ -1,3 +1,5 @@
+![travis](https://travis-ci.org/sigurdsvela/wp-require.svg)
+
 # WP Require
 
 ## What is wp-require
