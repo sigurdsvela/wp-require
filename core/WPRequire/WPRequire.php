@@ -159,7 +159,7 @@ class WPRequire {
 
     private static function deactivatePlugin($basefile) {
         $pluginFiles = get_option('active_plugins');
-        $key = array_search($basefile, $plugin);
+        $key = array_search($basefile, $pluginFiles);
         unset($pluginFiles[$key]);
         update_option('active_plugins', $pluginFiles);
     }
