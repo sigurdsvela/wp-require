@@ -81,25 +81,25 @@ class WPRequire {
                 $unsuported[$pluginFile]["wp"] = array($requiredWpVersion, self::getWpVersion());
             }
 
-            foreach($requiredPlugins as $requiredPlugin) {
-                $requiredPluginFile = $requiredPlugin->getPluginFile();
-                $requiredPluginVersion = $requiredPlugin->getVersion();
-
-                if (!is_plugin_active($requiredPlugin->getPluginFile())) {
+            foreach($requiredPlugins as $requiredPluginFile => $requiredPluginVersion) {
+                if (!is_plugin_active($requiredPluginFile)) {
                     if (!isset($unsuported[$pluginFile]))
                         $unsuported[$pluginFile] = array();
-                    $unsuported[$pluginFile][$requiredPlugin->getPluginFile()] = array($requiredPluginVersion, null);
+                    $unsuported[$pluginFile][$requiredPluginFile] = array($requiredPluginVersion, null);
                 } else {
-                    $pluginData = get_plugin_data($requiredPlugin->getPluginFile());
-                    var_dump($pluginData);
-                    if (!isset($pluginData["version"])) {
-                        throw new Exception("Version not set");
+                    $pluginData = get_plugin_data(WPRequire::ABSPATH() . "/../" . $requiredPluginFile);
+
+                    if (!isset($pluginData["Version"])) {
+                        throw new \Exception("Version not set");
                         //TODO Set some flag to tell that it is being tried to require a plugin without versioning
                         continue;
                     }
 
-                    if (!$requiredPlugin->getVersion()->isCompatibleWith($pluginData["version"])) {
-                        $unsuported[$pluginFile][$requiredPlugin->getPluginFile()] = array($requiredPluginVersion, new Version($pluginData["version"]));
+                    $requiredVersion = new Version($requiredPluginVersion);
+                    $suppliedVersion = new Version($pluginData["Version"]);
+
+                    if (!$requiredVersion->isCompatibleWith($suppliedVersion)) {
+                        $unsuported[$pluginFile][$requiredPluginFile] = array($requiredPluginVersion, new Version($pluginData["Version"]));
                     }
                 }
             }
