@@ -4,6 +4,8 @@ namespace WPRequire;
 use WPRequire\lib\WPPlugin;
 use WPRequire\lib\Version;
 
+use std\parser\Json;
+
 /**
 * Main class
 */
@@ -51,7 +53,7 @@ class WPRequire {
         foreach ($toDeactivate as $pluginFile => $reasons) {
             self::deactivatePlugin($pluginFile);
             // TODO, descriptive messages
-            self::addAdminNotice("Deactivated $pluginFile because stuff...");
+            self::addAdminNotice("Deactivated $pluginFile becuase " . new Json($reasons));
         }
     }
 
