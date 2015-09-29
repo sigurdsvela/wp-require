@@ -71,14 +71,14 @@ class WPRequire {
         $unsuported = [];
         foreach ($activePlugins as $plugin) {
             $pluginFile = $plugin->getPluginFile();
-            $unsuported[$pluginFile] = array();
-
-
             $wpRequireFile = $plugin->getWpRequire();
 
             // If no wp-require file exists, assume it has all it needs
             if ($wpRequireFile === null) continue;
 
+            // Init the $unsuported array for this plugin
+            $unsuported[$pluginFile] = array();
+            
             $requiredPhpVersion = $wpRequireFile->getRequiredPhpVersion();
             $requiredWpVersion = $wpRequireFile->getRequiredWpVersion();
             $requiredPlugins = $wpRequireFile->getRequiredPlugins();
@@ -101,12 +101,6 @@ class WPRequire {
                 } else {
                     $pluginData = get_plugin_data(WPRequire::ABSPATH() . "/../" . $requiredPluginFile);
 
-                    if (!isset($pluginData["Version"])) {
-                        throw new \Exception("Version not set");
-                        //TODO Set some flag to tell that it is being tried to require a plugin without versioning
-                        continue;
-                    }
-
                     $requiredVersion = new Version($requiredPluginVersion);
                     $suppliedVersion = new Version($pluginData["Version"]);
 
@@ -118,7 +112,7 @@ class WPRequire {
 
             // If no reasons for why this plugin is unsuported can be found
             // Remove it from the array
-            if (empty($unsuported[$pluginFile]))
+            if (count($unsuported[$pluginFile]) === 0)
                 unset($unsuported[$pluginFile]);
         }
 
