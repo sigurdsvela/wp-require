@@ -92,6 +92,24 @@ class VersionTest extends \WP_UnitTestCase {
     }
 
     /* # Test the "isCompatibleWith" method # */
+    function testAllWildcardInRequiredIsAllwaysCompatable() {
+        $required = new Version("*.*.*");
+        $supplied = new Version("1.1.1");
+        $this->assertTrue($required->isCompatibleWith($supplied));
+    }
+
+    function testIsCompatableWithMinorWildcard() {
+        $required = new Version("1.*");
+        $supplied = new Version("1.1.1");
+        $this->assertTrue($required->isCompatibleWith($supplied));   
+    }
+
+    function testIsCompatableWithPatchWildcard() {
+        $required = new Version("1.1.*");
+        $supplied = new Version("1.1.1");
+        $this->assertTrue($required->isCompatibleWith($supplied));   
+    }
+
     function testThatIfSuppliedIsSmallerItReturnsFalse() {
         $required = new Version("2.2.0");
         $supplied = new Version("2.1.0");

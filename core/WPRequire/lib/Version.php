@@ -229,6 +229,9 @@ class Version {
         //If the version passed in is smaller
         if ($this->compare($version) === -1) return false;
 
+        // Its the same version, or wildcard magic
+        if ($this->compare($version) === 0) return true;
+
         //If $version is another major version
         if ($this->getMajor() !== $version->getMajor()) return false;
 
