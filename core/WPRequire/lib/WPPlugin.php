@@ -11,6 +11,9 @@ class WPPlugin {
     /** @var string|null Null if this plugin is not a folder */
     private $pluginFolder;
 
+    /** @var Version|null Null if not on admin */
+    private $version = null;
+
     private $wpRequireFile;
 
     /**
@@ -26,6 +29,11 @@ class WPPlugin {
             $this->pluginFolder = null;
         }
 
+        if (function_exists('get_plugin_data')) {
+            $pluginData = get_plugin_data(WPRequire::ABSPATH() . "/../" . $this->pluginFile);
+            $this->version = new Version($pluginData["Version"]);
+        }
+
         if (file_exists($this->getWpRequireFilePath())) {
             $this->wpRequireFile = new WPRequireFile($this->getWpRequireFilePath());
         } else {
@@ -33,8 +41,15 @@ class WPPlugin {
         }
     }
 
+    /**
+     * Get the version of this plugin
+     * This only works on admin. Becaus, for some stupid fucking reason
+     * wordpresses "get_plugin_data" only workd on admin.
+     * 
+     * @return Version|null Null if not on admin
+     */
     public function getVersion() {
-
+        return $this->version;
     }
 
     /**
