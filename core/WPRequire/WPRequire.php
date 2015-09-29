@@ -67,7 +67,7 @@ class WPRequire {
 
 
             $wpRequireFile = $plugin->getWpRequire();
-            $requiredPhpVersion = $wpRequireFile->getRequirePhpVersion();
+            $requiredPhpVersion = $wpRequireFile->getRequiredPhpVersion();
             $requiredWpVersion = $wpRequireFile->getRequiredWpVersion();
             $requiredPlugins = $wpRequireFile->getRequiredPlugins();
 

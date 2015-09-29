@@ -68,7 +68,7 @@ class WPRequireFile {
      *
      * @return Version The required PHP version
      */
-    public function getRequirePhpVersion() {
+    public function getRequiredPhpVersion() {
         return $this->requiredPhpVersion;
     }
 
