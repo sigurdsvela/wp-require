@@ -3,15 +3,21 @@
 # WP Require
 
 ## What is wp-require
-WP require is a plugin for WordPress developers. It allows you to set a wp-require.json or wp-require.yaml file in your theme or plugin
-where you can specify which php version your require, what version of WordPress you require, and what other plugins are required.
+WP require is a plugin for WordPress developers. It allows you to set a
+wp-require.json or wp-require.yaml file in your theme or plugin
+where you can specify which php version your require, what version of WordPress
+you require, and what other plugins are required.
 
-When you spesify plugins that are required, it will also make sure that these plugins are loaded before yours is. But, however, because of the way plugins are writte, it's hard to try to handle circular referencing. So at version 1.0, it will not.
+What does it do with this infomration? well, glad you asked.
+It will make sure that, at any time, if a plugin or theme will not be able to
+run. It is deactivated with a notice
+to avoid wordpresses white screen of death.
 
-It will also gracefully fail you plugin if some of the plugins requirements are not met, with a message to the user that says excacly what went wrong.
+It will also try to order the loading of plugins to make sure
+that requirements are loaded before the plugin requiring them is loaded.
 
-## The wp-require file
-The wp-require file can be written in either JSON or YAML, your choice. The structure is exacly the same for both languages, so I'll use JSON here.
+## The wp-require.json file
+The wp-require file is written in either JSON.
 
 Here is a sample file.
 ```javascript
@@ -19,7 +25,7 @@ Here is a sample file.
 	"php" : "5.3.*",
 	"wordpress" : "4.*",
 	"plugins" : {
-		"plugin-name" : "1.0.*"
+		"plugin-name/plugin-name.php" : "1.0.*"
 	}
 }
 ```
@@ -47,5 +53,5 @@ if you are running MAMP or AMPPS, and using the built in php version supplied by
 
 0. Fork the project
 1. Create a feature branch for your new feture.
-2. When your done, merge it into the develop branch **WITHOUT --no-ff**
+2. When your done, merge it into the develop branch **with --no-ff**
 3. Send a pull request.
