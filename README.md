@@ -1,4 +1,4 @@
-![travis](https://travis-ci.org/sigurdsvela/wp-require.svg)
+[![travis](https://travis-ci.org/sigurdsvela/wp-require.svg)](https://travis-ci.org/sigurdsvela/wp-require)
 
 # WP Require
 
