@@ -255,13 +255,13 @@ class Version {
     public function __toString() {
         $string = $this->getMajor() . "." . $this->getMinor() . "." . $this->getPatch();
         if ($this->isRC())
-            $string .= "-" . $this->getRC();
+            $string .= "-rc" . $this->getRC();
         
         if ($this->isBeta())
-            $string .= "-" . $this->getBeta();
+            $string .= "-beta" . $this->getBeta();
 
         if ($this->isAlpha())
-            $string .= "-" . $this->getAlpha();
+            $string .= "-alpha" . $this->getAlpha();
 
         return $string;
     }
