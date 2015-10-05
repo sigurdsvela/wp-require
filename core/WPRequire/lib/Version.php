@@ -234,7 +234,7 @@ class Version {
      *   $version->isCompatibleWith("2.0.0"); //false
      * </code>
      */
-    public function isCompatibleWith(self $version) {
+    public function isCompatibleWith(Version $version) {
         //If the version passed in is smaller
         if ($this->compare($version) === -1) return false;
 
