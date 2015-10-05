@@ -39,6 +39,10 @@ class WPRequire {
         return WP_REQUIRE_ABSPATH;
     }
 
+    public static function PLUGINS_DIR() {
+        return ABSPATH . '/wp-content/plugins';
+    }
+
     /**
      * Deactivates plugins base on requirements. And adds admin notices
      * if the a plugin is deactivated.
@@ -99,7 +103,7 @@ class WPRequire {
                         $unsuported[$pluginFile] = array();
                     $unsuported[$pluginFile][$requiredPluginFile] = array($requiredPluginVersion, null);
                 } else {
-                    $pluginData = get_plugin_data(WPRequire::ABSPATH() . "/../" . $requiredPluginFile);
+                    $pluginData = get_plugin_data(WPRequire::PLUGINS_DIR() . "/" . $requiredPluginFile);
 
                     $requiredVersion = new Version($requiredPluginVersion);
                     $suppliedVersion = new Version($pluginData["Version"]);

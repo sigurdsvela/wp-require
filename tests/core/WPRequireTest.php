@@ -27,7 +27,7 @@ class WPRequireTest extends \WP_UnitTestCase {
      * @return WPPlugin The plugin
      */
     public function createMockPlugin($requires) {
-        $basePluginDir = WPRequire::ABSPATH() . "/..";
+        $basePluginDir = ABSPATH . "/wp-content/plugins";
 
         // Create a random name
         $pluginName = Str::random(20);
