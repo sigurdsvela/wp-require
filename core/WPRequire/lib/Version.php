@@ -156,6 +156,15 @@ class Version {
         return $this->alpha;
     }
 
+    /**
+     * Compare two Version objects
+     * Returns -1 if $this is bigger, 0 if they are equal
+     * and +1 if the $version given is bigger.
+     *
+     * @param Version $version The version to compare to
+     *
+     * @return int
+     */
     public function compare(Version $version) {
         if ($this->getMajor() !== "*" && $version->getMajor() !== "*") {
             if ($this->getMajor() > $version->getMajor()) return -1;
