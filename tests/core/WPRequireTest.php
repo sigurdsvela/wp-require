@@ -68,6 +68,30 @@ class WPRequireTest extends \WP_UnitTestCase {
         return new WPPlugin("$pluginName/$pluginName.php");
     }
 
+    public function testActivatePlugin() {
+        $WPRequire = new WPRequire();
+        $mockPlugin = $this->createMockPlugin(array());
+        $mockPluginFile = $mockPlugin->getPluginFile();
+
+        // Activate the mock plugin
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
+
+        $plugins = WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "getAllActivePlugins",
+            [$mockPluginFile]
+        );
+
+        $wasActivated = false;
+        foreach($plugins as $plugin) {
+            if ($plugin->getPluginFile() === $mockPluginFile) {
+                $wasActivated = true;
+            }
+        }
+
+        $this->assertTrue($wasActivated);
+    }
+
     public function testGetUnsuportedPluginsOutdatedPhp() {
         $WPRequire = new WPRequire();
         $mockPhpVersionRequire = new Version("10.0.0");
