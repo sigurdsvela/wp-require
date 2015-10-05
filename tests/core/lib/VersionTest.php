@@ -5,6 +5,27 @@ use WPRequire\lib\Version;
 
 class VersionTest extends \WP_UnitTestCase {
 
+    /* # Test the __toString() method # */
+    function testToString() {
+        $version = new Version("1.2.3");
+        $this->assertEquals("1.2.3", (string)$version);
+    }
+
+    function testToStringWithRC() {
+        $version = new Version("1.2.3-rc1");
+        $this->assertEquals("1.2.3-rc1", (string)$version);
+    }
+
+    function testToStringWithBeta() {
+        $version = new Version("1.2.3-b1");
+        $this->assertEquals("1.2.3-beta1", (string)$version);
+    }
+
+    function testToStringWithAlpha() {
+        $version = new Version("1.2.3-a1");
+        $this->assertEquals("1.2.3-alpha1", (string)$version);
+    }
+
     /* # Test The Compare method. $version1 is allways less # */
 
     function testCompareMajorWithoutSpecials() {
