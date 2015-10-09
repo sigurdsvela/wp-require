@@ -16,7 +16,9 @@ class WPRequire {
      * Entry point
      */
     public static function main() {
-        self::managePluginsBaseOnRequirement();
+        add_action('admin_init', function() {
+            self::managePluginsBaseOnRequirement();
+        });
 
         /* Print admin notices on the admin_notices hook */
         add_action('admin_notices', function() {
