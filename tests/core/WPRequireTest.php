@@ -38,6 +38,72 @@ class WPRequireTest extends \WP_UnitTestCase {
         }
 
         $this->assertTrue($wasActivated);
+
+        // Test "isPluginActive" while we are at it
+        $this->assertTrue(
+            WPRequireTestUtils::invokeMethod(
+                $WPRequire,
+                "isPluginActive",
+                [$mockPluginFile]
+            )
+        );
+    }
+
+    public function testDeactivatePlugin() {
+        // First activate a plugin
+        $WPRequire = new WPRequire();
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array());
+        $mockPluginFile = $mockPlugin->getPluginFile();
+
+        // Activate the mock plugin
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
+
+        // Check that it activated
+        $this->assertTrue(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
+
+        // Deactivate the plugin
+        WPRequireTestUtils::invokeMethod($WPRequire, "deactivatePlugin", [$mockPluginFile]);
+
+
+        // Check that it deactivated
+        $this->assertFalse(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
+    }
+
+    public function testThatDeactivatePluginDeactivatesDoublyActivatedPlugins() {
+        // First activate a plugin
+        $WPRequire = new WPRequire();
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array());
+        $mockPluginFile = $mockPlugin->getPluginFile();
+
+        // Activate the mock plugin, TWICE
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
+
+        // Check that it activated
+        $this->assertTrue(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
+
+        // Deactivate the plugin, ONCE
+        WPRequireTestUtils::invokeMethod($WPRequire, "deactivatePlugin", [$mockPluginFile]);
+
+
+        // Check that it deactivated, ONCE.
+        $this->assertFalse(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
     }
 
     public function testGetUnsuportedPluginsOutdatedPhp() {

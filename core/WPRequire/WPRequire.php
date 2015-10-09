@@ -224,11 +224,37 @@ class WPRequire {
         update_option('active_plugins', $pluginFiles);
     }
 
+    /**
+     * Deactivate a plugin.
+     * Removes a plugin from the active_plugins option.
+     * If there are more than one instance of the plugin in
+     * active_plugins, all will be removed.
+     *
+     * @param string $baseFile The base file for the plugin to deactivate
+     *
+     * @return void
+     */
     private static function deactivatePlugin($basefile) {
         $pluginFiles = get_option('active_plugins');
-        $key = array_search($basefile, $pluginFiles);
-        unset($pluginFiles[$key]);
+
+        $keys = array_keys($pluginFiles, $basefile);
+        foreach($keys as $key) {
+            unset($pluginFiles[$key]);
+        }
+
         update_option('active_plugins', $pluginFiles);
+        $pluginFiles = get_option('active_plugins');
+    }
+
+    /**
+     * Checks if a plugin exists in the active_plugins option.
+     *
+     * @param string $baseFile The basefile for the plugin
+     *
+     * @return bool True if it does, false if it dosent.
+     */
+    private static function isPluginActive($baseFile) {
+        return array_search($baseFile, get_option('active_plugins')) !== false;
     }
 
     private static function getAllActivePlugins() {
