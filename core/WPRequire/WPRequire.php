@@ -16,9 +16,7 @@ class WPRequire {
      * Entry point
      */
     public static function main() {
-        add_action('admin_init', function() {
-            self::managePluginsBaseOnRequirement();
-        });
+        self::managePluginsBaseOnRequirement();
 
         /* Print admin notices on the admin_notices hook */
         add_action('admin_notices', function() {
@@ -154,7 +152,7 @@ class WPRequire {
             $unsuported[$pluginFile]['plugins'] = array();
 
             foreach($requiredPlugins as $requiredPluginFile => $requiredPluginVersion) {
-                if (!\is_plugin_active($requiredPluginFile)) {
+                if (!self::isPluginActive($requiredPluginFile)) {
                     if (!isset($unsuported[$pluginFile]['plugins']))
                         $unsuported[$pluginFile]['plugins'] = array();
                     
