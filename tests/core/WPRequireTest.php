@@ -131,7 +131,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         
         // Test that the PHP reason is marked as expected
         $this->assertEquals(
-            $unsuported[$mockPluginFile]["na/na.php"],
+            $unsuported[$mockPluginFile]['plugins']["na/na.php"],
             array(
                 new Version("5.3.1"),
                 false
@@ -173,11 +173,11 @@ class WPRequireTest extends \WP_UnitTestCase {
                 new Version("2.0.0"),
                 new Version("1.0.0")
             ),
-            $unsuported[$mockPluginFile][$requiredPluginFile]
+            $unsuported[$mockPluginFile]['plugins'][$requiredPluginFile]
         );
 
         // Test that there is only one reason for this to be unsuported
-        $this->assertEquals(count($unsuported[$mockPluginFile]), 1);
+        $this->assertEquals(count($unsuported[$mockPluginFile]['plugins']), 1);
     }
 
     function testGetAllActivePlugins() {
