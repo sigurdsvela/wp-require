@@ -16,7 +16,9 @@ if (is_admin())
 
 // Hot fix. Until phpstd implements composer autoloading.
 require_once __DIR__ . "/vendor/sigurdsvela/std/autoloader.php";
+
 require_once __DIR__ . "/core/autoload.php";
+
 use WPRequire\WPRequire;
 
 if (!defined('WP_REQUIRE_ABSPATH'))
