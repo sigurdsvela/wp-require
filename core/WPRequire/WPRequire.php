@@ -64,8 +64,6 @@ class WPRequire {
      * if the a plugin is deactivated.
      */
     private static function managePluginsBaseOnRequirement() {
-        self::activatePlugin("akismet/akismet.php");
-
         /* Holds the plugins that must be deactivated */
         /* In plugin-base-file=>[$pluginObject, missing-part] pairs */
         $toDeactivate = self::getUnsuportedPlugins();
