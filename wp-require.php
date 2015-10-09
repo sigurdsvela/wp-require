@@ -11,7 +11,9 @@
  */
 
 // We need some function from here
-require_once ABSPATH . "/wp-admin/includes/plugin.php";
+if (is_admin())
+    require_once ABSPATH . "/wp-admin/includes/plugin.php";
+
 // Hot fix. Until phpstd implements composer autoloading.
 require_once __DIR__ . "/vendor/sigurdsvela/std/autoloader.php";
 require_once __DIR__ . "/core/autoload.php";
