@@ -70,9 +70,49 @@ class WPRequire {
 
         foreach ($toDeactivate as $pluginFile => $reasons) {
             self::deactivatePlugin($pluginFile);
-            // TODO, descriptive messages
-            self::addAdminNotice("Deactivated $pluginFile becuase " . new Json($reasons));
+            
+            $resonsString = self::buildReadableResonsString($pluginFile, $reasons);
+
+            self::addAdminNotice(
+                "<strong>Deactivated $pluginFile: </strong>" . $resonsString,
+                "error"
+            );
         }
+    }
+
+    /**
+     * The "getUnsuportedPlugins" and "getUnsuportedTheme"
+     * functions returns the reson why the plugin or theme was
+     * unsuported. This take one of those, and builds a readable
+     * string.
+     *
+     * @return string The readable string
+     */
+    private static function buildReadableResonsString($addonName, $reasons) {
+        $string = "$addonName was unsuported because ";
+        if (isset($reasons['php'])) {
+            $string .= " $addonName requires version {$reasons['php'][0]} of php, " .
+            " {$reasons['php'][1]} was supplied.";
+        }
+
+        if (isset($reasons['wp'])) {
+            $string .= "<br>And $addonName requires version {$reasons['wp'][0]} of WordPress, " .
+            " {$reasons['wp'][1]} was supplied.";
+        }
+
+        if (!isset($reasons['plugins'])) return $string;
+
+        foreach ($reasons['plugins'] as $pluginName => $value) {
+            $string .= "<br>And $addonName requires version <strong>{$value[0]}</strong> of the plugin <strong>$pluginName</strong>, ";
+
+            if (isset($value[1])) {
+                $string .= " {$value[1]} was supplied.";
+            } else {
+                $string .= " none was supplied.";
+            }
+        }
+
+        return $string;
     }
 
     /**
