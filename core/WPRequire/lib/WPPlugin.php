@@ -4,7 +4,7 @@ namespace WPRequire\lib;
 use WPRequire\WPRequire;
 use WPRequire\WPRequireFile;
 
-class WPPlugin {
+class WPPlugin extends WPAddon{
     /** @var string The basefile for the plugin */
     private $pluginFile;
 
@@ -13,8 +13,6 @@ class WPPlugin {
 
     /** @var Version|null Null if not on admin */
     private $version = null;
-
-    private $wpRequireFile;
 
     /**
      * The unique name of the plugin
@@ -34,10 +32,20 @@ class WPPlugin {
             $this->version = new Version($pluginData["Version"]);
         }
 
-        if (file_exists($this->getWpRequireFilePath())) {
-            $this->wpRequireFile = new WPRequireFile($this->getWpRequireFilePath());
+        parent::__construct();
+    }
+
+    /**
+     * Return the absolut path to the root of the plugin, or null
+     * if this plugin is a single file.
+     *
+     * @return string|null
+     */
+    protected function getPath() {
+        if ($this->getPluginFolder() === null) {
+            return null;
         } else {
-            $this->wpRequireFile = null;
+            return WPRequire::PLUGINS_DIR() . "/" . $this->getPluginFolder();
         }
     }
 
@@ -87,22 +95,5 @@ class WPPlugin {
      */
     public function deactivate() {
         deactivale_plugins($this->pluginFile);
-    }
-
-    /**
-     * Return the path to the wp-require file
-     */
-    public function getWpRequireFilePath() {
-        return WPRequire::PLUGINS_DIR() . "/" . $this->pluginFolder . "/wp-require.json";
-    }
-
-    /**
-     * Return an instance of WPRequireFile, or null, if
-     * said plugin had no WPRequire file
-     *
-     * @return WPRequireFile|null
-     */
-    public function getWpRequire() {
-        return $this->wpRequireFile;
     }
 }

@@ -16,61 +16,9 @@ class WPRequireTest extends \WP_UnitTestCase {
     /* @var File[] contains file to detele on tearDown */
     private $toDelete = [];
 
-    /**
-     * Create a mock plugin that is deleted
-     * when the tests are done running 
-     * with a wp-require file
-     * with the contents of $require.
-     *
-     * @param array $requires The desired contents of the wp-require file.
-     *
-     * @return WPPlugin The plugin
-     */
-    public function createMockPlugin($requires) {
-        $basePluginDir = ABSPATH . "/wp-content/plugins";
-
-        // Create a random name
-        $pluginName = Str::random(20);
-
-        // Create the plugin directory
-        $pluginDir = new File($basePluginDir . "/$pluginName");
-        $pluginDir->createDir();
-        
-        // Create the base plugin file
-        $pluginFile = new File($pluginDir->getPath() . "/$pluginName.php");
-        $pluginFile->createFile();
-
-        // Write plugin name and version to the plugin header
-        $pluginFileWriter = new FileWriter($pluginFile);
-        $pluginFileWriter->open();
-        $pluginFileWriter->write("
-/*
- * Plugin Name: $pluginName
- * Version: 1.0.0
- */");
-        $pluginFileWriter->close();
-        
-        // Create the wp-require.json file
-        $wpRequireFile = new File($pluginDir->getPath() . "/wp-require.json");
-        $wpRequireFile->createFile();
-        $wpRequireFileWriter = new FileWriter($wpRequireFile);
-        
-        // Write the array as json to the wp-require.json file
-        $wpRequireFileWriter->open();
-        $wpRequireFileWriter->write((string)(new Json($requires)));
-        $wpRequireFileWriter->close();
-
-        // Request files to be deleted on tearDown
-        array_push($this->toDelete, $pluginFile);
-        array_push($this->toDelete, $wpRequireFile);
-        array_push($this->toDelete, $pluginDir);
-
-        return new WPPlugin("$pluginName/$pluginName.php");
-    }
-
     public function testActivatePlugin() {
         $WPRequire = new WPRequire();
-        $mockPlugin = $this->createMockPlugin(array());
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array());
         $mockPluginFile = $mockPlugin->getPluginFile();
 
         // Activate the mock plugin
@@ -97,7 +45,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         $mockPhpVersionRequire = new Version("10.0.0");
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "php" => (string)$mockPhpVersionRequire
         ));
 
@@ -130,7 +78,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         $mockWpVersionRequire = new Version("10.0.0");
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "wordpress" => (string)$mockWpVersionRequire
         ));
 
@@ -166,7 +114,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         );
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "plugins" => $mockRequiredPlugins
         ));
 
@@ -197,11 +145,11 @@ class WPRequireTest extends \WP_UnitTestCase {
     public function testGetUnsuportedPluginsOutdatedPlugin() {
         $WPRequire = new WPRequire();
 
-        $requiredPlugin = $this->createMockPlugin(array());
+        $requiredPlugin = WPRequireTestUtils::createMockPlugin(array());
         $requiredPluginFile = $requiredPlugin->getPluginFile();
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "plugins" => array(
                 $requiredPluginFile => "2.0.0"
             )

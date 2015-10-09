@@ -39,8 +39,22 @@ class WPRequire {
         return WP_REQUIRE_ABSPATH;
     }
 
+    /**
+     * Get the path to the plugins directory
+     *
+     * @return string Path to the plugins directory
+     */
     public static function PLUGINS_DIR() {
         return ABSPATH . '/wp-content/plugins';
+    }
+
+    /**
+     * Get the path to the themes directory
+     *
+     * @return string Path to the themes directory
+     */
+    public static function THEMES_DIR() {
+        return ABSPATH . '/wp-content/themes';
     }
 
     /**
