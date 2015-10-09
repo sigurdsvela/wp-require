@@ -111,11 +111,14 @@ class WPRequire {
                 $unsuported[$pluginFile]["wp"] = array($requiredWpVersion, self::getWpVersion());
             }
 
+            $unsuported[$pluginFile]['plugins'] = array();
+
             foreach($requiredPlugins as $requiredPluginFile => $requiredPluginVersion) {
-                if (!is_plugin_active($requiredPluginFile)) {
-                    if (!isset($unsuported[$pluginFile]))
-                        $unsuported[$pluginFile] = array();
-                    $unsuported[$pluginFile][$requiredPluginFile] = array($requiredPluginVersion, null);
+                if (!\is_plugin_active($requiredPluginFile)) {
+                    if (!isset($unsuported[$pluginFile]['plugins']))
+                        $unsuported[$pluginFile]['plugins'] = array();
+                    
+                    $unsuported[$pluginFile]['plugins'][$requiredPluginFile] = array($requiredPluginVersion, null);
                 } else {
                     $pluginData = get_plugin_data(WPRequire::PLUGINS_DIR() . "/" . $requiredPluginFile);
 
@@ -123,11 +126,16 @@ class WPRequire {
                     $suppliedVersion = new Version($pluginData["Version"]);
 
                     if (!$requiredVersion->isCompatibleWith($suppliedVersion)) {
-                        $unsuported[$pluginFile][$requiredPluginFile] = array($requiredPluginVersion, new Version($pluginData["Version"]));
+                        $unsuported[$pluginFile]['plugins'][$requiredPluginFile] = array($requiredPluginVersion, new Version($pluginData["Version"]));
                     }
                 }
             }
 
+
+            // If this plugins plugin requirments was uphelp
+            if (count($unsuported[$pluginFile]['plugins']) === 0)
+                unset($unsuported[$pluginFile]['plugins']);
+            
             // If no reasons for why this plugin is unsuported can be found
             // Remove it from the array
             if (count($unsuported[$pluginFile]) === 0)
