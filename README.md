@@ -1,10 +1,10 @@
-![travis](https://travis-ci.org/sigurdsvela/wp-require.svg)
+[![travis](https://travis-ci.org/sigurdsvela/wp-require.svg)](https://travis-ci.org/sigurdsvela/wp-require)
 
 # WP Require
 
 ## What is wp-require
 WP require is a plugin for WordPress developers. It allows you to set a
-wp-require.json or wp-require.yaml file in your theme or plugin
+wp-require.json file in your theme or plugin
 where you can specify which php version your require, what version of WordPress
 you require, and what other plugins are required.
 

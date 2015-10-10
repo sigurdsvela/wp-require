@@ -16,56 +16,94 @@ class WPRequireTest extends \WP_UnitTestCase {
     /* @var File[] contains file to detele on tearDown */
     private $toDelete = [];
 
-    /**
-     * Create a mock plugin that is deleted
-     * when the tests are done running 
-     * with a wp-require file
-     * with the contents of $require.
-     *
-     * @param array $requires The desired contents of the wp-require file.
-     *
-     * @return WPPlugin The plugin
-     */
-    public function createMockPlugin($requires) {
-        $basePluginDir = WPRequire::ABSPATH() . "/..";
+    public function testActivatePlugin() {
+        $WPRequire = new WPRequire();
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array());
+        $mockPluginFile = $mockPlugin->getPluginFile();
 
-        // Create a random name
-        $pluginName = Str::random(20);
+        // Activate the mock plugin
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
 
-        // Create the plugin directory
-        $pluginDir = new File($basePluginDir . "/$pluginName");
-        $pluginDir->createDir();
-        
-        // Create the base plugin file
-        $pluginFile = new File($pluginDir->getPath() . "/$pluginName.php");
-        $pluginFile->createFile();
+        $plugins = WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "getAllActivePlugins",
+            [$mockPluginFile]
+        );
 
-        // Write plugin name and version to the plugin header
-        $pluginFileWriter = new FileWriter($pluginFile);
-        $pluginFileWriter->open();
-        $pluginFileWriter->write("
-/*
- * Plugin Name: $pluginName
- * Version: 1.0.0
- */");
-        $pluginFileWriter->close();
-        
-        // Create the wp-require.json file
-        $wpRequireFile = new File($pluginDir->getPath() . "/wp-require.json");
-        $wpRequireFile->createFile();
-        $wpRequireFileWriter = new FileWriter($wpRequireFile);
-        
-        // Write the array as json to the wp-require.json file
-        $wpRequireFileWriter->open();
-        $wpRequireFileWriter->write((string)(new Json($requires)));
-        $wpRequireFileWriter->close();
+        $wasActivated = false;
+        foreach($plugins as $plugin) {
+            if ($plugin->getPluginFile() === $mockPluginFile) {
+                $wasActivated = true;
+            }
+        }
 
-        // Request files to be deleted on tearDown
-        array_push($this->toDelete, $pluginFile);
-        array_push($this->toDelete, $wpRequireFile);
-        array_push($this->toDelete, $pluginDir);
+        $this->assertTrue($wasActivated);
 
-        return new WPPlugin("$pluginName/$pluginName.php");
+        // Test "isPluginActive" while we are at it
+        $this->assertTrue(
+            WPRequireTestUtils::invokeMethod(
+                $WPRequire,
+                "isPluginActive",
+                [$mockPluginFile]
+            )
+        );
+    }
+
+    public function testDeactivatePlugin() {
+        // First activate a plugin
+        $WPRequire = new WPRequire();
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array());
+        $mockPluginFile = $mockPlugin->getPluginFile();
+
+        // Activate the mock plugin
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
+
+        // Check that it activated
+        $this->assertTrue(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
+
+        // Deactivate the plugin
+        WPRequireTestUtils::invokeMethod($WPRequire, "deactivatePlugin", [$mockPluginFile]);
+
+
+        // Check that it deactivated
+        $this->assertFalse(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
+    }
+
+    public function testThatDeactivatePluginDeactivatesDoublyActivatedPlugins() {
+        // First activate a plugin
+        $WPRequire = new WPRequire();
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array());
+        $mockPluginFile = $mockPlugin->getPluginFile();
+
+        // Activate the mock plugin, TWICE
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
+        WPRequireTestUtils::invokeMethod($WPRequire, "activatePlugin", [$mockPluginFile]);
+
+        // Check that it activated
+        $this->assertTrue(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
+
+        // Deactivate the plugin, ONCE
+        WPRequireTestUtils::invokeMethod($WPRequire, "deactivatePlugin", [$mockPluginFile]);
+
+
+        // Check that it deactivated, ONCE.
+        $this->assertFalse(WPRequireTestUtils::invokeMethod(
+            $WPRequire,
+            "isPluginActive",
+            [$mockPluginFile]
+        ));
     }
 
     public function testGetUnsuportedPluginsOutdatedPhp() {
@@ -73,7 +111,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         $mockPhpVersionRequire = new Version("10.0.0");
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "php" => (string)$mockPhpVersionRequire
         ));
 
@@ -106,7 +144,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         $mockWpVersionRequire = new Version("10.0.0");
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "wordpress" => (string)$mockWpVersionRequire
         ));
 
@@ -142,7 +180,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         );
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "plugins" => $mockRequiredPlugins
         ));
 
@@ -159,7 +197,7 @@ class WPRequireTest extends \WP_UnitTestCase {
         
         // Test that the PHP reason is marked as expected
         $this->assertEquals(
-            $unsuported[$mockPluginFile]["na/na.php"],
+            $unsuported[$mockPluginFile]['plugins']["na/na.php"],
             array(
                 new Version("5.3.1"),
                 false
@@ -173,11 +211,11 @@ class WPRequireTest extends \WP_UnitTestCase {
     public function testGetUnsuportedPluginsOutdatedPlugin() {
         $WPRequire = new WPRequire();
 
-        $requiredPlugin = $this->createMockPlugin(array());
+        $requiredPlugin = WPRequireTestUtils::createMockPlugin(array());
         $requiredPluginFile = $requiredPlugin->getPluginFile();
 
         // Create the mock plugin
-        $mockPlugin = $this->createMockPlugin(array(
+        $mockPlugin = WPRequireTestUtils::createMockPlugin(array(
             "plugins" => array(
                 $requiredPluginFile => "2.0.0"
             )
@@ -201,11 +239,11 @@ class WPRequireTest extends \WP_UnitTestCase {
                 new Version("2.0.0"),
                 new Version("1.0.0")
             ),
-            $unsuported[$mockPluginFile][$requiredPluginFile]
+            $unsuported[$mockPluginFile]['plugins'][$requiredPluginFile]
         );
 
         // Test that there is only one reason for this to be unsuported
-        $this->assertEquals(count($unsuported[$mockPluginFile]), 1);
+        $this->assertEquals(count($unsuported[$mockPluginFile]['plugins']), 1);
     }
 
     function testGetAllActivePlugins() {

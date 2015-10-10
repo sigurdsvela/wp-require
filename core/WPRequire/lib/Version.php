@@ -156,6 +156,15 @@ class Version {
         return $this->alpha;
     }
 
+    /**
+     * Compare two Version objects
+     * Returns -1 if $this is bigger, 0 if they are equal
+     * and +1 if the $version given is bigger.
+     *
+     * @param Version $version The version to compare to
+     *
+     * @return int
+     */
     public function compare(Version $version) {
         if ($this->getMajor() !== "*" && $version->getMajor() !== "*") {
             if ($this->getMajor() > $version->getMajor()) return -1;
@@ -225,7 +234,7 @@ class Version {
      *   $version->isCompatibleWith("2.0.0"); //false
      * </code>
      */
-    public function isCompatibleWith(self $version) {
+    public function isCompatibleWith(Version $version) {
         //If the version passed in is smaller
         if ($this->compare($version) === -1) return false;
 
@@ -246,13 +255,13 @@ class Version {
     public function __toString() {
         $string = $this->getMajor() . "." . $this->getMinor() . "." . $this->getPatch();
         if ($this->isRC())
-            $string .= "-" . $this->getRC();
+            $string .= "-rc" . $this->getRC();
         
         if ($this->isBeta())
-            $string .= "-" . $this->getBeta();
+            $string .= "-beta" . $this->getBeta();
 
         if ($this->isAlpha())
-            $string .= "-" . $this->getAlpha();
+            $string .= "-alpha" . $this->getAlpha();
 
         return $string;
     }

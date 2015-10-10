@@ -40,21 +40,77 @@ class WPRequire {
     }
 
     /**
+     * Get the path to the plugins directory
+     *
+     * @return string Path to the plugins directory
+     */
+    public static function PLUGINS_DIR() {
+        return ABSPATH . '/wp-content/plugins';
+    }
+
+    /**
+     * Get the path to the themes directory
+     *
+     * @return string Path to the themes directory
+     */
+    public static function THEMES_DIR() {
+        return ABSPATH . '/wp-content/themes';
+    }
+
+    /**
      * Deactivates plugins base on requirements. And adds admin notices
      * if the a plugin is deactivated.
      */
     private static function managePluginsBaseOnRequirement() {
-        self::activatePlugin("akismet/akismet.php");
-
         /* Holds the plugins that must be deactivated */
         /* In plugin-base-file=>[$pluginObject, missing-part] pairs */
         $toDeactivate = self::getUnsuportedPlugins();
 
         foreach ($toDeactivate as $pluginFile => $reasons) {
             self::deactivatePlugin($pluginFile);
-            // TODO, descriptive messages
-            self::addAdminNotice("Deactivated $pluginFile becuase " . new Json($reasons));
+            
+            $resonsString = self::buildReadableResonsString($pluginFile, $reasons);
+
+            self::addAdminNotice(
+                "<strong>Deactivated $pluginFile: </strong>" . $resonsString,
+                "error"
+            );
         }
+    }
+
+    /**
+     * The "getUnsuportedPlugins" and "getUnsuportedTheme"
+     * functions returns the reson why the plugin or theme was
+     * unsuported. This take one of those, and builds a readable
+     * string.
+     *
+     * @return string The readable string
+     */
+    private static function buildReadableResonsString($addonName, $reasons) {
+        $string = "$addonName was unsuported because ";
+        if (isset($reasons['php'])) {
+            $string .= " $addonName requires version {$reasons['php'][0]} of php, " .
+            " {$reasons['php'][1]} was supplied.";
+        }
+
+        if (isset($reasons['wp'])) {
+            $string .= "<br>And $addonName requires version {$reasons['wp'][0]} of WordPress, " .
+            " {$reasons['wp'][1]} was supplied.";
+        }
+
+        if (!isset($reasons['plugins'])) return $string;
+
+        foreach ($reasons['plugins'] as $pluginName => $value) {
+            $string .= "<br>And $addonName requires version <strong>{$value[0]}</strong> of the plugin <strong>$pluginName</strong>, ";
+
+            if (isset($value[1])) {
+                $string .= " {$value[1]} was supplied.";
+            } else {
+                $string .= " none was supplied.";
+            }
+        }
+
+        return $string;
     }
 
     /**
@@ -93,23 +149,31 @@ class WPRequire {
                 $unsuported[$pluginFile]["wp"] = array($requiredWpVersion, self::getWpVersion());
             }
 
+            $unsuported[$pluginFile]['plugins'] = array();
+
             foreach($requiredPlugins as $requiredPluginFile => $requiredPluginVersion) {
-                if (!is_plugin_active($requiredPluginFile)) {
-                    if (!isset($unsuported[$pluginFile]))
-                        $unsuported[$pluginFile] = array();
-                    $unsuported[$pluginFile][$requiredPluginFile] = array($requiredPluginVersion, null);
+                if (!self::isPluginActive($requiredPluginFile)) {
+                    if (!isset($unsuported[$pluginFile]['plugins']))
+                        $unsuported[$pluginFile]['plugins'] = array();
+                    
+                    $unsuported[$pluginFile]['plugins'][$requiredPluginFile] = array($requiredPluginVersion, null);
                 } else {
-                    $pluginData = get_plugin_data(WPRequire::ABSPATH() . "/../" . $requiredPluginFile);
+                    $pluginData = get_plugin_data(WPRequire::PLUGINS_DIR() . "/" . $requiredPluginFile);
 
                     $requiredVersion = new Version($requiredPluginVersion);
                     $suppliedVersion = new Version($pluginData["Version"]);
 
                     if (!$requiredVersion->isCompatibleWith($suppliedVersion)) {
-                        $unsuported[$pluginFile][$requiredPluginFile] = array($requiredPluginVersion, new Version($pluginData["Version"]));
+                        $unsuported[$pluginFile]['plugins'][$requiredPluginFile] = array($requiredPluginVersion, new Version($pluginData["Version"]));
                     }
                 }
             }
 
+
+            // If this plugins plugin requirments was uphelp
+            if (count($unsuported[$pluginFile]['plugins']) === 0)
+                unset($unsuported[$pluginFile]['plugins']);
+            
             // If no reasons for why this plugin is unsuported can be found
             // Remove it from the array
             if (count($unsuported[$pluginFile]) === 0)
@@ -158,11 +222,37 @@ class WPRequire {
         update_option('active_plugins', $pluginFiles);
     }
 
+    /**
+     * Deactivate a plugin.
+     * Removes a plugin from the active_plugins option.
+     * If there are more than one instance of the plugin in
+     * active_plugins, all will be removed.
+     *
+     * @param string $baseFile The base file for the plugin to deactivate
+     *
+     * @return void
+     */
     private static function deactivatePlugin($basefile) {
         $pluginFiles = get_option('active_plugins');
-        $key = array_search($basefile, $pluginFiles);
-        unset($pluginFiles[$key]);
+
+        $keys = array_keys($pluginFiles, $basefile);
+        foreach($keys as $key) {
+            unset($pluginFiles[$key]);
+        }
+
         update_option('active_plugins', $pluginFiles);
+        $pluginFiles = get_option('active_plugins');
+    }
+
+    /**
+     * Checks if a plugin exists in the active_plugins option.
+     *
+     * @param string $baseFile The basefile for the plugin
+     *
+     * @return bool True if it does, false if it dosent.
+     */
+    private static function isPluginActive($baseFile) {
+        return array_search($baseFile, get_option('active_plugins')) !== false;
     }
 
     private static function getAllActivePlugins() {
