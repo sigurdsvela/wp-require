@@ -2,7 +2,7 @@
 /*
  * Plugin Name: WP Require
  * Plugin URI:  https://github.com/sigurdsvela/wp-require
- * Description: A WordPress plugin to handle plugin dependencies
+ * Description: Handles WordPress plugin and theme requirements.
  * Version:     0.1.1
  * Author:      Sigurd Svela
  * Author URI:  https://github.com/sigurdsvela
