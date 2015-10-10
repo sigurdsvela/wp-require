@@ -4,31 +4,36 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "aa046336e80dec95dd78d54a7d980310",
-    "content-hash": "7424a9ba8ee889d263e580d3c04dadc2",
+    "hash": "5dfb71a2d91146b8159609b94c8e6ccc",
+    "content-hash": "8269e5e73bb8b375ad349063c1bf6b02",
     "packages": [
         {
             "name": "sigurdsvela/std",
-            "version": "v1.0",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sigurdsvela/phpstd.git",
-                "reference": "6b68574478d332a687741f547343986268dc694f"
+                "reference": "f7428d438695462cbf9acc5a41dd167f5aeffa21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sigurdsvela/phpstd/zipball/6b68574478d332a687741f547343986268dc694f",
-                "reference": "6b68574478d332a687741f547343986268dc694f",
+                "url": "https://api.github.com/repos/sigurdsvela/phpstd/zipball/f7428d438695462cbf9acc5a41dd167f5aeffa21",
+                "reference": "f7428d438695462cbf9acc5a41dd167f5aeffa21",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "php": ">=5.4.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "3.7.*",
                 "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "std\\": "std/"
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "LGPL"
@@ -36,12 +41,12 @@
             "authors": [
                 {
                     "name": "Sigurd Berg Svela",
-                    "email": "sigurd@bergsvela.com",
+                    "email": "sigurdbergsvela@gmail.com",
                     "role": "Developer"
                 }
             ],
-            "description": "This library is still in pre-alpha, and its API will change quickly, but rest assured, as of 2014 it's being developed and an alpha release is expected by the end of february. Provides a bunch of useful classes for all kinds of stuff. It much servers the same purpose as SPL although more so than SPL enforcing OOP.",
-            "time": "2015-02-18 22:27:17"
+            "description": "This library provides alot of usefull functionality, and provides OO wrappers around PHP built in functionality.",
+            "time": "2015-10-09 23:24:04"
         }
     ],
     "packages-dev": [],

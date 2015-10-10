@@ -3,8 +3,6 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-//Hot fix. Until phpstd implements composer autoloading.
-require_once __DIR__ . "/../vendor/sigurdsvela/std/autoloader.php";
 require_once __DIR__ . "/../core/autoload.php";
 require_once __DIR__ . "/WPRequireTestUtils.php";
 
