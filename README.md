@@ -2,22 +2,22 @@
 
 # WP Require
 
+![Screen Shot](http://sigurdsvela.github.io/wp-require/res/screen-shot-1.png)
+
 ## What is wp-require
-WP require is a plugin for WordPress developers. It allows you to set a
-wp-require.json file in your theme or plugin
-where you can specify which php version your require, what version of WordPress
-you require, and what other plugins are required.
+WP Require is a plugin for anybody who has been in the situation where a plugin requires another plugin, and causes the ever so lovley whitescreen of death, or some other fatal error that forces you to somehow deactivate th eplugin manually.
 
-What does it do with this infomration? well, glad you asked.
-It will make sure that, at any time, if a plugin or theme will not be able to
-run. It is deactivated with a notice
-to avoid wordpresses white screen of death.
+WP Require aims to fix that, and some other stuff while its at it
 
-It will also try to order the loading of plugins to make sure
-that requirements are loaded before the plugin requiring them is loaded.
+## Auto-Deactivate
+If a plugin or theme requires something that is not provided by the environment, WP Require will automatically deactivate the plugin, and provide a usefull message that contains all the information about exaclty why it was deactivated.
+
+## Auto Plugin Load Ordering
+Let's say you have 3 plugins, plugin A, B and C; C requires B, and A requires B. Every plugin requires B. Now, WordPress doesn't know which plugin uses functionality from other plugins, and will load the plugins in an arbitrary fashion.
+WP Require on the other hand knows, and will force the plugin order to make sure all of a plugins requirements have been loaded before the plugin is loaded.
 
 ## The wp-require.json file
-The wp-require file is written in either JSON.
+The wp-require.json is placed in the root of your theme or plugin.
 
 Here is a sample file.
 ```javascript
@@ -34,20 +34,8 @@ Just put a file like this in the root of your theme or plugin. Make sure you hav
 
 
 ## Contributing
-
-This project requires
-- The wordpress test library, to be located in /tmp/wordpress-tests-lib/
-- PHPUnit, google it. To run unit tests.
-- wp-cli, again google it. This one is just to make your life simpler.
-
-Use the wp-cli to set up the unit tests. This should also download the Wordpress
-Test Library into the /tmp/ path. This library provides some usfull functionality, just
-checkout the API. Now, inside of this library is a wp-test-config.php file that takes presidence over
-the config file in your instalation when running unit tests. Remember to set the correct DB info in here.
-
-Also remember, that if you are running PHPUnit with a PHP version that has not the default socket type set
-to the MySQL running, you must use 127.0.0.1 address, and not "localhost". This will, for example, be relevant
-if you are running MAMP or AMPPS, and using the built in php version supplied by your OS.
+To contribute you will have to be able to run a MySQL database, and you need PHPUnit to run the unit tests.
+Remember, no pull request will be accepted without unittests for said feature.
 
 ### Contribution workflow
 

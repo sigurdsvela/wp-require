@@ -7,3 +7,4 @@ dist/*
 # compose #
 vendor/*
 tests/wordpress-tests-lib/wp-tests-config.php
+tests/wordpress-test-library/wp-tests-config.php
