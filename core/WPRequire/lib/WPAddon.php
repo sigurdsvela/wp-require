@@ -9,6 +9,10 @@ use WPRequire\WPRequireFile;
 abstract class WPAddon {
     private $wpRequireFile;
 
+    protected final static function DEFAULT_VERSION() {
+        return new Version("0.0.0-a0");
+    }
+
     /**
      * Sets up the basics for all addons
      */

@@ -42,7 +42,7 @@ class WPTheme extends WPAddon {
             $this->version = new Version($this->themeData['version']);
         } else {
             // Null if none is spesified
-            $this->version = new Version("0.0.0-a0");
+            $this->version = new Version(self::DEFAULT_VERSION());
         }
 
         parent::__construct();

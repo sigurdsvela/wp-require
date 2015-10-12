@@ -36,7 +36,7 @@ class WPPlugin extends WPAddon{
             if (!empty($pluginData["Version"])) {
                 $this->version = new Version($pluginData["Version"]);
             } else {
-                $this->version = new Version("0.0.0-a0");
+                $this->version = new Version(self::DEFAULT_VERSION());
             }
         }
 
