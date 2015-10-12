@@ -48,6 +48,15 @@ class WPRequireTestUtils {
         return $variable->getValue();
     }
 
+    private static function createDataHeader(array $data) {
+        $dataString = "/*";
+        foreach ($data as $key => $value) {
+            $dataString .= " *$key: $value\n";
+        }
+        $dataString .= " */";
+        return $dataString;
+    }
+
     /**
      * Create a mock plugin that is deleted
      * when the tests are done running 
@@ -59,18 +68,13 @@ class WPRequireTestUtils {
      * @return WPPlugin The plugin
      */
     public static function createMockPlugin($requires, array $pluginData = array('Version' => '1.0.0')) {
-
         $basePluginDir = WPRequire::PLUGINS_DIR();
 
         // Create a random name
         $pluginName = Str::random(20);
 
         $pluginData['Plugin Name'] =  $pluginName;
-        $pluginDataString = "/*";
-        foreach ($pluginData as $key => $value) {
-            $pluginDataString .= " *$key: $value\n";
-        }
-        $pluginDataString .= " */";
+        $pluginDataString = self::createDataHeader($pluginData);
 
         // Create the plugin directory
         $pluginDir = new File($basePluginDir . "/$pluginName");
@@ -115,11 +119,14 @@ class WPRequireTestUtils {
      *
      * @return WPTheme The theme
      */
-    public static function createMockTheme($requires) {
+    public static function createMockTheme($requires, array $themeData = array('Version' => '1.0.0')) {
         $baseThemesDir = WPRequire::THEMES_DIR();
 
         // Create a random name
         $themeName = Str::random(20);
+
+        $themeData['Theme Name'] = $themeName;
+        $themeDataHeader = self::createDataHeader($themeData);
 
         // Create the plugin directory
         $themeDir = new File($baseThemesDir . "/$themeName");
@@ -132,11 +139,7 @@ class WPRequireTestUtils {
         // Write plugin name and version to the plugin header
         $styleCssWriter = new FileWriter($styleCss);
         $styleCssWriter->open();
-        $styleCssWriter->write("
-/*
- * Theme Name: $themeName
- * Version: 1.0.0
- */");
+        $styleCssWriter->write($themeDataHeader);
         $styleCssWriter->close();
         
         // Create the wp-require.json file
