@@ -31,85 +31,85 @@ class VersionTest extends \WP_UnitTestCase {
     function testCompareMajorWithoutSpecials() {
         $version1 = new Version("1.3.4");
         $version2 = new Version("2.2.1");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testCompareMinorWithoutSpecials() {
         $version1 = new Version("1.1.2");
         $version2 = new Version("1.2.0");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testComparePatchWithoutSpecials() {
         $version1 = new Version("1.1.1");
         $version2 = new Version("1.1.2");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testCompareWildcardMajorWithoutSpecials() {
         $version1 = new Version("*.1.1");
         $version2 = new Version("*.1.2");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testCompareWildcardMinorWithoutSpecials() {
         $version1 = new Version("1.*.1");
         $version2 = new Version("2.*.1");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testCompareWildcardPatchWithoutSpecials() {
         $version1 = new Version("1.1.*");
         $version2 = new Version("1.2.*");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testThatRCVersionIsLess() {
         $version1 = new Version("1.0.0-rc");
         $version2 = new Version("1.0.0");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testRCCompare() {
         $version1 = new Version("1.0.0-rc1");
         $version2 = new Version("1.0.0-rc2");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testThatBetaVersionIsLess() {
         $version1 = new Version("1.0.0-beta");
         $version2 = new Version("1.0.0");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testBetaCompare() {
         $version1 = new Version("1.0.0-beta1");
         $version2 = new Version("1.0.0-beta2");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testThatAlphaVersionIsLess() {
         $version1 = new Version("1.0.0-alpha");
         $version2 = new Version("1.0.0");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     function testAlphaCompare() {
         $version1 = new Version("1.0.0-alpha1");
         $version2 = new Version("1.0.0-alpha2");
-        $this->assertEquals(1, $version1->compare($version2));
-        $this->assertEquals(-1, $version2->compare($version1));
+        $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(1, $version2->compare($version1));
     }
 
     /* # Test the "isCompatibleWith" method # */

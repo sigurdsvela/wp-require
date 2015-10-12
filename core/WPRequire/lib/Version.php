@@ -158,8 +158,8 @@ class Version {
 
     /**
      * Compare two Version objects
-     * Returns -1 if $this is bigger, 0 if they are equal
-     * and +1 if the $version given is bigger.
+     * Returns +1 if $this is bigger, 0 if they are equal
+     * and -1 if the $version given is bigger.
      *
      * @param Version $version The version to compare to
      *
@@ -167,44 +167,44 @@ class Version {
      */
     public function compare(Version $version) {
         if ($this->getMajor() !== "*" && $version->getMajor() !== "*") {
-            if ($this->getMajor() > $version->getMajor()) return -1;
-            if ($version->getMajor() > $this->getMajor()) return 1;
+            if ($this->getMajor() > $version->getMajor()) return 1;
+            if ($version->getMajor() > $this->getMajor()) return -1;
         }
 
         if ($this->getMinor() !== "*" && $version->getMinor() !== "*") {
-            if ($this->getMinor() > $version->getMinor()) return -1;
-            if ($version->getMinor() > $this->getMinor()) return 1;
+            if ($this->getMinor() > $version->getMinor()) return 1;
+            if ($version->getMinor() > $this->getMinor()) return -1;
         }
 
         if ($this->getPatch() !== "*" && $version->getPatch() !== "*") {
-            if ($this->getPatch() > $version->getPatch()) return -1;
-            if ($version->getPatch() > $this->getPatch()) return 1;
+            if ($this->getPatch() > $version->getPatch()) return 1;
+            if ($version->getPatch() > $this->getPatch()) return -1;
         }
 
-        if (!$this->isRC() && $version->isRC()) return -1;
+        if (!$this->isRC() && $version->isRC()) return 1;
         if ($this->isRC()) {
-            if (!$version->isRC()) return 1;
+            if (!$version->isRC()) return -1;
             if ($this->getRC() === "*" || $version->getRC() === "*") return 0;
-            if ($this->getRC() > $version->getRC()) return -1;
-            if ($version->getRC() > $this->getRC()) return 1;
+            if ($this->getRC() > $version->getRC()) return 1;
+            if ($version->getRC() > $this->getRC()) return -1;
             return 0;
         }
 
-        if (!$this->isBeta() && $version->isBeta()) return -1;
+        if (!$this->isBeta() && $version->isBeta()) return 1;
         if ($this->isBeta()) {
-            if (!$version->isBeta()) return 1;
+            if (!$version->isBeta()) return -1;
             if ($this->getBeta() === "*" || $version->getBeta() === "*") return 0;
-            if ($this->getBeta() > $version->getBeta()) return -1;
-            if ($version->getBeta() > $this->getBeta()) return 1;
+            if ($this->getBeta() > $version->getBeta()) return 1;
+            if ($version->getBeta() > $this->getBeta()) return -1;
             return 0;
         }
 
-        if (!$this->isAlpha() && $version->isAlpha()) return -1;
+        if (!$this->isAlpha() && $version->isAlpha()) return 1;
         if ($this->isAlpha()) {
-            if (!$version->isAlpha()) return 1;
+            if (!$version->isAlpha()) return -1;
             if ($this->getAlpha() === "*" || $version->getAlpha() === "*") return 0;
-            if ($this->getAlpha() > $version->getAlpha()) return -1;
-            if ($version->getAlpha() > $this->getAlpha()) return 1;
+            if ($this->getAlpha() > $version->getAlpha()) return 1;
+            if ($version->getAlpha() > $this->getAlpha()) return -1;
             return 0;
         }
 
@@ -236,7 +236,7 @@ class Version {
      */
     public function isCompatibleWith(Version $version) {
         //If the version passed in is smaller
-        if ($this->compare($version) === -1) return false;
+        if ($this->compare($version) === 1) return false;
 
         // Its the same version, or wildcard magic
         if ($this->compare($version) === 0) return true;
