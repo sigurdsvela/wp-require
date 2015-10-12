@@ -25,6 +25,7 @@ class WPRequireFile {
     public function __construct($path) {
         $json = new Json();
         $json->parseString(file_get_contents($path));
+
         if ($json->offsetExists("wordpress"))
             $this->requiredWpVersion = new Version(
                 $json->offsetGet("wordpress")
