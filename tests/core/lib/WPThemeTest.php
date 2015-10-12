@@ -41,4 +41,9 @@ class WPThemeTest extends \WP_UnitTestCase {
         );
     }
 
+    public static function getVersionForThemeWithoutSpesifiedVersion() {
+        $theme = WPRequireTestUtils::createMockTheme(array(),array());
+        $this->assertEquals("0.0.0-alpha0", $theme->getVersion());
+    }
+
 }

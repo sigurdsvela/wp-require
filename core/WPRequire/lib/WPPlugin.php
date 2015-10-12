@@ -29,7 +29,11 @@ class WPPlugin extends WPAddon{
 
         if (function_exists('get_plugin_data')) {
             $pluginData = get_plugin_data(WPRequire::PLUGINS_DIR() . "/" . $this->pluginFile);
-            $this->version = new Version($pluginData["Version"]);
+            if (!empty($pluginData["Version"])) {
+                $this->version = new Version($pluginData["Version"]);
+            } else {
+                $this->version = new Version("0.0.0-a0");
+            }
         }
 
         parent::__construct();
