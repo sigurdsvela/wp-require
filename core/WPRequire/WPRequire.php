@@ -248,11 +248,11 @@ class WPRequire {
      *
      * @return bool True if it does, false if it dosent.
      */
-    private static function isPluginActive($baseFile) {
+    public static function isPluginActive($baseFile) {
         return array_search($baseFile, get_option('active_plugins')) !== false;
     }
 
-    private static function getAllActivePlugins() {
+    public static function getAllActivePlugins() {
         $plugins = [];
         $pluginFiles = get_option('active_plugins');
         foreach ($pluginFiles as $k => $pluginFile) {
