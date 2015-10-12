@@ -193,10 +193,6 @@ class WPRequire {
         return new Version($wp_version);
     }
 
-    public static function getWordPressVersion() {
-
-    }
-
     private static function addAdminNotice($text, $type = "update") {
         $notice = [];
         if ($type === "update") {
