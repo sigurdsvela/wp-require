@@ -32,9 +32,9 @@ abstract class WPAddon {
 
     /**
      * Get the version of this addon.
-     * If no version is spesified for this addon, null is returned.
+     * If no version is spesified for this addon, 0.0.0-a0 is assumed.
      *
-     * @return Version|null The version of this addon
+     * @return Version The version of this addon
      */
     public abstract function getVersion();
 

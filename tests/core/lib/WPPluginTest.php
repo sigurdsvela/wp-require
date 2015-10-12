@@ -39,4 +39,11 @@ class WPPluginTest extends \WP_UnitTestCase {
         );
     }
 
+    public function testThatNotSpesifingPluginVersionInPluginDataWorksAsExpected() {
+        // Create a plugin that does not spesify a version number
+        $plugin = WPRequireTestUtils::createMockPlugin(array(), array());
+
+        $this->assertEquals("0.0.0-alpha0", (string)$plugin->getVersion());
+    }
+
 }
