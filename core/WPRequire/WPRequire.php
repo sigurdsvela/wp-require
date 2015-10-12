@@ -2,6 +2,7 @@
 namespace WPRequire;
 
 use WPRequire\lib\WPPlugin;
+use WPRequire\lib\WPTheme;
 use WPRequire\lib\Version;
 
 use std\parser\Json;
@@ -262,5 +263,14 @@ class WPRequire {
             array_push($plugins, new WPPlugin($pluginFile));
         }
         return $plugins;
+    }
+
+    /**
+     * Get the current theme
+     * 
+     * @return WPTheme The current theme
+     */
+    public static function getActiveTheme() {
+        return new WPTheme(get_template_directory());
     }
 }
