@@ -58,11 +58,19 @@ class WPRequireTestUtils {
      *
      * @return WPPlugin The plugin
      */
-    public static function createMockPlugin($requires) {
+    public static function createMockPlugin($requires, array $pluginData = array('Version' => '1.0.0')) {
+
         $basePluginDir = WPRequire::PLUGINS_DIR();
 
         // Create a random name
         $pluginName = Str::random(20);
+
+        $pluginData['Plugin Name'] =  $pluginName;
+        $pluginDataString = "/*";
+        foreach ($pluginData as $key => $value) {
+            $pluginDataString .= " *$key: $value\n";
+        }
+        $pluginDataString .= " */";
 
         // Create the plugin directory
         $pluginDir = new File($basePluginDir . "/$pluginName");
@@ -75,11 +83,7 @@ class WPRequireTestUtils {
         // Write plugin name and version to the plugin header
         $pluginFileWriter = new FileWriter($pluginFile);
         $pluginFileWriter->open();
-        $pluginFileWriter->write("
-/*
- * Plugin Name: $pluginName
- * Version: 1.0.0
- */");
+        $pluginFileWriter->write($pluginDataString);
         $pluginFileWriter->close();
         
         // Create the wp-require.json file
