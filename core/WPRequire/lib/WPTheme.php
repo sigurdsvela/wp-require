@@ -21,7 +21,7 @@ class WPTheme extends WPAddon {
     public function __construct($path) {
         $this->path = WPRequire::THEMES_DIR() . "/" . $path;
 
-        $themeObject = wp_get_theme($this->path . "/style.css", $this->path);
+        $themeObject = wp_get_theme(basename($this->path));
 
         // Extract the theme data into an assosiativ array
         $this->themeData = array(
