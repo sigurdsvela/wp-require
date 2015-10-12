@@ -133,52 +133,13 @@ class WPRequire {
             // If no wp-require file exists, assume it has all it needs
             if ($wpRequireFile === null) continue;
 
-            // Init the $unsuported array for this plugin
-            $unsuported[$pluginFile] = array();
-            
-            $requiredPhpVersion = $wpRequireFile->getRequiredPhpVersion();
-            $requiredWpVersion = $wpRequireFile->getRequiredWpVersion();
-            $requiredPlugins = $wpRequireFile->getRequiredPlugins();
+            $result = $plugin->getUnmetRequirements();
 
-            $phpComp = $requiredPhpVersion->isCompatibleWith(self::getPhpVersion());
-            if (!$phpComp) {
-                $unsuported[$pluginFile]["php"] = array($requiredPhpVersion, self::getPhpVersion());
-            }
+            // No unmet requirements
+            if (count($result) === 0) continue;
 
-            $wpComp = $requiredWpVersion->isCompatibleWith(self::getWpVersion());
-            if (!$wpComp) {
-                $unsuported[$pluginFile]["wp"] = array($requiredWpVersion, self::getWpVersion());
-            }
-
-            $unsuported[$pluginFile]['plugins'] = array();
-
-            foreach($requiredPlugins as $requiredPluginFile => $requiredPluginVersion) {
-                if (!self::isPluginActive($requiredPluginFile)) {
-                    if (!isset($unsuported[$pluginFile]['plugins']))
-                        $unsuported[$pluginFile]['plugins'] = array();
-                    
-                    $unsuported[$pluginFile]['plugins'][$requiredPluginFile] = array($requiredPluginVersion, null);
-                } else {
-                    $pluginData = get_plugin_data(WPRequire::PLUGINS_DIR() . "/" . $requiredPluginFile);
-
-                    $requiredVersion = new Version($requiredPluginVersion);
-                    $suppliedVersion = new Version($pluginData["Version"]);
-
-                    if (!$requiredVersion->isCompatibleWith($suppliedVersion)) {
-                        $unsuported[$pluginFile]['plugins'][$requiredPluginFile] = array($requiredPluginVersion, new Version($pluginData["Version"]));
-                    }
-                }
-            }
-
-
-            // If this plugins plugin requirments was uphelp
-            if (count($unsuported[$pluginFile]['plugins']) === 0)
-                unset($unsuported[$pluginFile]['plugins']);
-            
-            // If no reasons for why this plugin is unsuported can be found
-            // Remove it from the array
-            if (count($unsuported[$pluginFile]) === 0)
-                unset($unsuported[$pluginFile]);
+            // Unmet requirements, add it to the $unsuported array
+            $unsuported[$pluginFile] = $result;
         }
 
         return $unsuported;

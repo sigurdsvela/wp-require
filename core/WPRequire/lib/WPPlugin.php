@@ -112,4 +112,5 @@ class WPPlugin extends WPAddon{
     public function deactivate() {
         deactivale_plugins($this->pluginFile);
     }
+
 }
