@@ -46,4 +46,13 @@ class WPPluginTest extends \WP_UnitTestCase {
         $this->assertEquals("0.0.0-alpha0", (string)$plugin->getVersion());
     }
 
+    public function testGetName() {
+        $plugin = WPRequireTestUtils::createMockPlugin(
+            array(),
+            array("Plugin Name" => "MyName")
+        );
+
+        $this->assertEquals("MyName", $plugin->getName());
+    }
+
 }

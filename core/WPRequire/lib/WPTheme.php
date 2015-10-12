@@ -48,6 +48,15 @@ class WPTheme extends WPAddon {
         parent::__construct();
     }
 
+    /**
+     * Get the name for this theme
+     * 
+     * @return string
+     */
+    public function getName() {
+        return $this->themeData["Name"];
+    }
+
     public function getPath() {
         return $this->path;
     }

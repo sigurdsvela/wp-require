@@ -14,6 +14,9 @@ class WPPlugin extends WPAddon{
     /** @var Version|null Null if not on admin */
     private $version = null;
 
+    /** @var string[] holds plugin data */
+    private $pluginData;
+
     /**
      * The unique name of the plugin
      */
@@ -27,8 +30,9 @@ class WPPlugin extends WPAddon{
             $this->pluginFolder = null;
         }
 
+        $this->pluginData = array();
         if (function_exists('get_plugin_data')) {
-            $pluginData = get_plugin_data(WPRequire::PLUGINS_DIR() . "/" . $this->pluginFile);
+            $this->pluginData = get_plugin_data(WPRequire::PLUGINS_DIR() . "/" . $this->pluginFile);
             if (!empty($pluginData["Version"])) {
                 $this->version = new Version($pluginData["Version"]);
             } else {
@@ -50,6 +54,14 @@ class WPPlugin extends WPAddon{
             return null;
         } else {
             return WPRequire::PLUGINS_DIR() . "/" . $this->getPluginFolder();
+        }
+    }
+
+    public function getName() {
+        if (isset($this->pluginData["Name"])) {
+            return $this->pluginData["Name"];
+        } else {
+            return "";
         }
     }
 

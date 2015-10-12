@@ -21,6 +21,14 @@ abstract class WPAddon {
     }
 
     /**
+     * Get the name for this addon.
+     * Returns an empty string if none is spesified
+     * 
+     * @return string
+     */
+    public abstract function getName();
+
+    /**
      * If this is a not single file addon
      * , returns the root directory of this addon.
      * if this is a single file addon(single file plugin),

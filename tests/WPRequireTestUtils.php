@@ -73,7 +73,8 @@ class WPRequireTestUtils {
         // Create a random name
         $pluginName = Str::random(20);
 
-        $pluginData['Plugin Name'] =  $pluginName;
+        if (!isset($pluginData['Plugin Name']))
+            $pluginData['Plugin Name'] =  $pluginName;
         $pluginDataString = self::createDataHeader($pluginData);
 
         // Create the plugin directory
@@ -125,7 +126,8 @@ class WPRequireTestUtils {
         // Create a random name
         $themeName = Str::random(20);
 
-        $themeData['Theme Name'] = $themeName;
+        if (!isset($themeData['Theme Name']))
+            $themeData['Theme Name'] = $themeName;
         $themeDataHeader = self::createDataHeader($themeData);
 
         // Create the plugin directory

@@ -46,4 +46,13 @@ class WPThemeTest extends \WP_UnitTestCase {
         $this->assertEquals("0.0.0-alpha0", $theme->getVersion());
     }
 
+    public function testGetName() {
+        $theme = WPRequireTestUtils::createMockTheme(
+            array(),
+            array("Theme Name" => "MyName")
+        );
+
+        $this->assertEquals("MyName", $theme->getName());
+    }
+
 }
