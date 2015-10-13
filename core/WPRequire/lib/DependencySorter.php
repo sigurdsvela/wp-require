@@ -9,14 +9,14 @@ use InvalidArgumentException;
  * their dependencies
  */
 class DependencySorter {
-    // Maps pluginBaseFile=>DependencySorterLink
-    private $depLinkMap = array();
-
+    /** @var WPPlugin[string] holds pluginFile=>WPPlugin pairs */
     private $plugins = array();
 
+    /** @var WPPlugin Holds the WPPlugin array sorted by dependency */
     private $pluginsOrdered = array();
 
     public function __construct($plugins) {
+        // Add all plugins to the $this->plugin array, with pluginFile as index
         foreach ($plugins as $plugin) {
             if (!($plugin instanceof WPPlugin)) {
                 throw new InvalidArgumentException(
@@ -26,6 +26,7 @@ class DependencySorter {
             $this->plugins[$plugin->getPluginFile()] = $plugin;
         }
 
+        // Holds the plugins ordered by dependency, in pluginFile=>null pairs
         $pluginsOrderedKey = array();
 
         foreach($plugins as $i => $plugin) {
@@ -41,11 +42,17 @@ class DependencySorter {
             );
         }
 
+        // From the pluginFiles=>null pairs, make a sorted array of WPPlugin objects
         foreach ($pluginsOrderedKey as $pluginFile => $nul) {
             $this->pluginsOrdered[] = $this->plugins[$pluginFile];
         }
     }
 
+    /**
+     * Get the plugins passed to the constructor, sorted by dependency
+     * 
+     * @return WPPlugin
+     */
     public function getDependencySortedArray() {
         return $this->pluginsOrdered;
     }
@@ -66,9 +73,6 @@ class DependencySorter {
         // Get the dependencies for this plugins
         $dependencies = $plugin->getWpRequire()->getRequiredPlugins();
 
-        // Retrive the basefile for all the deps
-        $deps = array();
-
         foreach($dependencies as $p => $version) {
             if (!isset($this->plugins[$p])) {
                 throw new InvalidArgumentException(
@@ -77,56 +81,10 @@ class DependencySorter {
             }
             $_pluginsAdded = $this->getPluginDependencyOrder($this->plugins[$p]);
             $pluginsAdded = array_merge($pluginsAdded, $_pluginsAdded);
-            $deps[] = $p;
         }
 
         $pluginFile = $plugin->getPluginFile();
-        $this->depLinkMap[$pluginFile] = new DependencySorterLink($plugin);
-
-        // Set all of the dependencies for this plugin
-        foreach ($deps as $dep) {
-            $this->depLinkMap[$pluginFile]->addDependency($this->depLinkMap[$dep]);
-        }
 
         return array_merge($pluginsAdded, array($pluginFile => null));
-    }
-
-    /**
-     * Get an array of the plugins passed
-     * in an order the guaranties that
-     * no plugin at any index requires
-     * a plugin in a later position.
-     * 
-     * @return WPPlugin[]
-     */
-    public function getDependencieOrder() {
-
-    }
-}
-
-class DependencySorterLink {
-    private $dependencies = [];
-    private $plugin;
-
-    /**
-     * Sort of a linked list type of thing
-     * 
-     * @param WPPlugin This plugin
-     * @param DependencySorterLink The links containsing the plugins this one reuqire
-     */
-    public function __construct(WPPlugin $plugin) {
-        $this->plugin = $plugin;
-    }
-
-    public function addDependency(DependencySorterLink &$link) {
-        $this->dependencies[$link->getPlugin()->getPluginFile()] = &$link;
-    }
-
-    public function &getDependecies() {
-        return $this->dependencies;
-    }
-
-    public function getPlugin() {
-        return $this->plugin;
     }
 }
